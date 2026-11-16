@@ -72,15 +72,31 @@ function ProductCard({ product, onAdd, onSave, saved }: { product: Product; onAd
   );
 }
 
+function CartPanel({ items, onClose, onRemove }: { items: Product[]; onClose: () => void; onRemove: (id: string) => void }) {
+  const total = items.reduce((sum, item) => sum + item.price, 0);
+  return (
+    <div className="fixed inset-0 z-50 bg-[#342521]/35" onClick={onClose}>
+      <aside onClick={(event) => event.stopPropagation()} className="absolute right-0 top-0 h-full w-full max-w-[420px] overflow-y-auto bg-paper p-6 shadow-2xl sm:p-8">
+        <div className="flex items-center justify-between border-b border-line pb-5">
+          <div><p className="text-[10px] font-bold uppercase tracking-[0.18em] text-rose-ink">Your basket</p><h2 className="display-font mt-1 text-3xl font-bold">A little lovely.</h2></div>
+          <button onClick={onClose} aria-label="Close basket" title="Close basket" className="text-2xl text-muted">×</button>
+        </div>
+        {items.length === 0 ? <div className="py-24 text-center"><p className="text-4xl">✿</p><p className="mt-5 font-semibold">Your basket is waiting.</p><p className="mt-2 text-sm text-subtle">Add a beautiful bunch to get started.</p></div> : <><div className="divide-y divide-line">{items.map((item, index) => <div key={`${item.id}-${index}`} className="flex gap-4 py-5"><img src={item.image} alt="" className="h-20 w-20 rounded object-cover" /><div className="flex-1"><div className="flex justify-between gap-2"><p className="display-font font-bold">{item.name}</p><p className="text-sm font-bold">{formatPrice(item.price)}</p></div><p className="mt-1 text-xs text-subtle">{item.colors}</p><button onClick={() => onRemove(item.id)} className="mt-3 text-[10px] font-bold uppercase tracking-widest text-rose-ink">Remove</button></div></div>)}</div><div className="mt-7 border-t border-line pt-5"><div className="flex justify-between text-sm"><span>Subtotal</span><strong>{formatPrice(total)}</strong></div><p className="mt-2 text-xs text-subtle">Delivery calculated at checkout.</p><Link href="/checkout" onClick={onClose} className="mt-6 block bg-rose py-4 text-center text-xs font-bold uppercase tracking-[0.14em] text-white hover:bg-rose-dark">Continue to checkout</Link></div></>}
+      </aside>
+    </div>
+  );
+}
+
 export default function Storefront() {
   const router = useRouter();
   const [cart, setCart] = useState<Product[]>([]);
+  const [cartOpen, setCartOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [savedIds, setSavedIds] = useState<string[]>([]);
-  const addToCart = (product: Product) => setCart((current) => [...current, product]);
+  const addToCart = (product: Product) => { setCart((current) => [...current, product]); setCartOpen(true); };
   const saveProduct = (product: Product) => setSavedIds((current) => current.includes(product.id) ? current.filter((id) => id !== product.id) : [...current, product.id]);
   return <div className="min-h-screen bg-paper">
-    <Header cartCount={cart.length} onCart={() => {}} onSearch={() => setSearchOpen(true)} />
+    <Header cartCount={cart.length} onCart={() => setCartOpen(true)} onSearch={() => setSearchOpen(true)} />
     {searchOpen && <div className="fixed inset-0 z-40 bg-[#342521]/35 px-5 pt-24" onClick={() => setSearchOpen(false)}><div onClick={(event) => event.stopPropagation()} className="mx-auto max-w-[650px] bg-paper p-6 shadow-2xl"><div className="flex items-center gap-4 border-b border-line-strong pb-3"><span className="text-xl text-rose-ink">⌕</span><input autoFocus placeholder="Search bouquets, gifts, roses..." className="w-full bg-transparent text-lg outline-none" onKeyDown={(event) => { if (event.key === "Enter") router.push(`/shop?search=${encodeURIComponent(event.currentTarget.value)}`); }} /><button onClick={() => setSearchOpen(false)} aria-label="Close search" className="text-xl text-muted">×</button></div><p className="mt-4 text-xs text-subtle">Try “roses”, “birthday”, or “gift set”, then press Enter.</p></div></div>}
     <main>
       <section className="hero-glow relative overflow-hidden">
@@ -112,5 +128,6 @@ export default function Storefront() {
       </section>
       <section className="bg-cream py-16 sm:py-20"><div className="mx-auto max-w-[1240px] px-5 lg:px-8"><div className="flex items-end justify-between"><div><p className="text-[10px] font-bold uppercase tracking-[0.2em] text-rose-ink">Fresh this week</p><h2 className="display-font mt-2 text-3xl font-bold tracking-[-0.04em] text-ink sm:text-4xl">The seasonal edit</h2></div><Link href="/shop" className="hidden text-xs font-bold uppercase tracking-widest text-rose-ink sm:block">Shop all →</Link></div>      <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">{products.slice(0, 4).map((product) => <ProductCard key={product.id} product={product} onAdd={addToCart} onSave={saveProduct} saved={savedIds.includes(product.id)} />)}</div></div></section>
     </main>
+    {cartOpen && <CartPanel items={cart} onClose={() => setCartOpen(false)} onRemove={(id) => setCart((current) => { const index = current.findIndex((item) => item.id === id); return index < 0 ? current : current.filter((_, itemIndex) => itemIndex !== index); })} />}
   </div>;
 }
