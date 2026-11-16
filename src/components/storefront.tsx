@@ -48,5 +48,30 @@ function Header({ cartCount, onCart, onSearch }: { cartCount: number; onCart: ()
 export default function Storefront() {
   return <div className="min-h-screen bg-paper">
     <Header cartCount={0} onCart={() => {}} onSearch={() => {}} />
+    <main>
+      <section className="hero-glow relative overflow-hidden">
+        <div className="mx-auto grid max-w-[1240px] items-center gap-12 px-5 pb-16 pt-10 sm:pt-20 lg:grid-cols-[0.9fr_1.1fr] lg:px-8 lg:pb-24 lg:pt-24">
+          <div className="relative z-10 max-w-[560px]">
+            <p className="mb-6 text-[11px] font-bold uppercase tracking-[0.23em] text-rose-ink">Flowers for the feeling</p>
+            <h1 className="display-font text-[44px] font-bold leading-[0.95] tracking-[-0.055em] text-ink sm:text-[58px] lg:text-[78px]">A little<br /><em className="font-normal text-rose-ink">more lovely</em><br />in every stem.</h1>
+            <p className="mt-7 max-w-[390px] text-[15px] leading-7 text-muted">Seasonal flowers, thoughtfully arranged and delivered with care. Make someone&apos;s ordinary day extraordinary.</p>
+            <div className="mt-9 flex flex-wrap items-center gap-4"><Link href="/shop" className="bg-rose px-6 py-4 text-xs sm:px-7 font-bold uppercase tracking-[0.14em] text-white shadow-[0_8px_24px_rgba(165,82,97,0.2)] hover:bg-rose-dark">Shop the collection</Link><a href="#how-it-works" className="border-b border-rose-ink pb-1 text-xs font-bold uppercase tracking-[0.14em] text-rose-ink">How it works →</a></div>
+            <div className="mt-12 flex items-center gap-3 text-xs text-subtle"><span className="text-lg text-rose-ink">✦</span> Same-day delivery in Dhaka <span className="mx-1">·</span> Hand-tied with love</div>
+          </div>
+          <div className="relative mx-auto w-full max-w-[590px]">
+            <div className="absolute -right-5 -top-8 h-32 w-32 rounded-full bg-[#e6c6c1]/60 blur-2xl" />
+            <div className="relative aspect-[0.9] overflow-hidden rounded-t-[48%] rounded-b-[10px] bg-cream shadow-2xl"><img src="/images/hero-garden-bouquet.jpg" alt="Fresh seasonal flowers arranged in a bright garden bouquet" className="h-full w-full object-cover object-center" /></div>
+            <div className="absolute -bottom-5 left-3 bg-surface px-5 py-4 text-ink shadow-xl sm:-left-5"><p className="text-[10px] uppercase tracking-[0.18em] text-rose-ink">Today&apos;s arrangement</p><p className="display-font mt-1 text-xl font-bold">Lily Rose Melody</p></div>
+          </div>
+        </div>
+      </section>
+      <section className="border-b border-line bg-paper">
+        <div className="mx-auto grid max-w-[1240px] divide-y divide-line px-5 py-5 sm:grid-cols-3 sm:divide-x sm:divide-y-0 lg:px-8">
+          <div className="flex items-center gap-3 py-3 sm:px-6 sm:py-0 sm:first:pl-0"><span className="text-2xl text-rose-ink">✿</span><div><p className="text-xs font-bold text-ink">Fresh every morning</p><p className="mt-1 text-[11px] text-subtle">Seasonal stems, always.</p></div></div>
+          <div className="flex items-center gap-3 py-3 sm:px-6 sm:py-0"><span className="text-2xl text-rose-ink">♡</span><div><p className="text-xs font-bold text-ink">Made with intention</p><p className="mt-1 text-[11px] text-subtle">Hand-tied by local florists.</p></div></div>
+          <div className="flex items-center gap-3 py-3 sm:px-6 sm:py-0 sm:last:pr-0"><span className="text-2xl text-rose-ink">⌁</span><div><p className="text-xs font-bold text-ink">Delivered with care</p><p className="mt-1 text-[11px] text-subtle">A beautiful arrival, guaranteed.</p></div></div>
+        </div>
+      </section>
+    </main>
   </div>;
 }
