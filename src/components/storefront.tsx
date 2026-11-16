@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { categories } from "@/lib/data";
+import { categories, formatPrice, products, type Product } from "@/lib/data";
 import ThemeToggle from "@/components/theme-toggle";
 
 function Icon({ children }: { children: React.ReactNode }) {
@@ -48,11 +48,39 @@ function Header({ cartCount, onCart, onSearch }: { cartCount: number; onCart: ()
   );
 }
 
+function ProductCard({ product, onAdd, onSave, saved }: { product: Product; onAdd: (product: Product) => void; onSave: (product: Product) => void; saved: boolean }) {
+  return (
+    <article className="group">
+      <div className="relative aspect-[0.88] overflow-hidden rounded-[4px] bg-cream shadow-[0_8px_24px_rgba(70,50,40,0.07)]">
+        <img src={product.image} alt={product.name} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+        {product.badge && <span className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.13em] text-[#a55261]">{product.badge}</span>}
+        <button onClick={() => onSave(product)} aria-pressed={saved} aria-label={`${saved ? "Remove" : "Save"} ${product.name} ${saved ? "from" : "to"} wishlist`} title={saved ? "Remove from wishlist" : "Save to wishlist"} className={`absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full text-lg shadow-sm hover:bg-[#a55261] hover:text-white ${saved ? "bg-[#a55261] text-white" : "bg-white/90 text-[#a55261]"}`}>{saved ? "♥" : "♡"}</button>
+        <button onClick={() => onAdd(product)} className="absolute bottom-3 left-3 right-3 translate-y-0 bg-white/95 py-3 text-xs font-bold uppercase tracking-[0.12em] text-[#4a3b36] opacity-100 shadow-sm transition md:translate-y-2 md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100 hover:bg-[#a55261] hover:text-white">Add to basket</button>
+      </div>
+      <div className="flex items-start justify-between gap-3 pt-4">
+        <div>
+          <h3 className="display-font text-[19px] font-bold text-ink">{product.name}</h3>
+          <p className="mt-1 text-xs text-subtle">{product.colors}</p>
+        </div>
+        <div className="text-right">
+          <p className="text-sm font-bold text-ink">{formatPrice(product.price)}</p>
+          {product.oldPrice && <p className="text-xs text-subtle line-through">{formatPrice(product.oldPrice)}</p>}
+        </div>
+      </div>
+      <p className="mt-2 flex items-center gap-2 text-xs text-subtle"><span className="text-[#c4874f]">★ {product.rating}</span><span>·</span><span>{product.category}</span><span className="ml-auto text-rose-ink">Hand-tied</span></p>
+    </article>
+  );
+}
+
 export default function Storefront() {
   const router = useRouter();
+  const [cart, setCart] = useState<Product[]>([]);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [savedIds, setSavedIds] = useState<string[]>([]);
+  const addToCart = (product: Product) => setCart((current) => [...current, product]);
+  const saveProduct = (product: Product) => setSavedIds((current) => current.includes(product.id) ? current.filter((id) => id !== product.id) : [...current, product.id]);
   return <div className="min-h-screen bg-paper">
-    <Header cartCount={0} onCart={() => {}} onSearch={() => setSearchOpen(true)} />
+    <Header cartCount={cart.length} onCart={() => {}} onSearch={() => setSearchOpen(true)} />
     {searchOpen && <div className="fixed inset-0 z-40 bg-[#342521]/35 px-5 pt-24" onClick={() => setSearchOpen(false)}><div onClick={(event) => event.stopPropagation()} className="mx-auto max-w-[650px] bg-paper p-6 shadow-2xl"><div className="flex items-center gap-4 border-b border-line-strong pb-3"><span className="text-xl text-rose-ink">⌕</span><input autoFocus placeholder="Search bouquets, gifts, roses..." className="w-full bg-transparent text-lg outline-none" onKeyDown={(event) => { if (event.key === "Enter") router.push(`/shop?search=${encodeURIComponent(event.currentTarget.value)}`); }} /><button onClick={() => setSearchOpen(false)} aria-label="Close search" className="text-xl text-muted">×</button></div><p className="mt-4 text-xs text-subtle">Try “roses”, “birthday”, or “gift set”, then press Enter.</p></div></div>}
     <main>
       <section className="hero-glow relative overflow-hidden">
@@ -82,6 +110,7 @@ export default function Storefront() {
         <div className="flex items-end justify-between"><div><p className="text-[10px] font-bold uppercase tracking-[0.2em] text-rose-ink">Find your feeling</p><h2 className="display-font mt-2 text-3xl font-bold tracking-[-0.04em] text-ink sm:text-4xl">Shop by occasion</h2></div><Link href="/shop" className="hidden text-xs font-bold uppercase tracking-widest text-rose-ink sm:block">View all flowers →</Link></div>
         <div className="hide-scrollbar mt-9 grid grid-cols-2 gap-3 overflow-x-auto sm:grid-cols-4 sm:gap-5">{categories.map((category) => <Link href={`/shop?category=${category.name}`} key={category.name} className="group relative aspect-[0.92] overflow-hidden rounded-[3px]"><img src={category.image} alt={category.name} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" /><div className="image-overlay absolute inset-0" /><span className="absolute bottom-5 left-5 display-font text-2xl font-bold text-white">{category.name}</span></Link>)}</div>
       </section>
+      <section className="bg-cream py-16 sm:py-20"><div className="mx-auto max-w-[1240px] px-5 lg:px-8"><div className="flex items-end justify-between"><div><p className="text-[10px] font-bold uppercase tracking-[0.2em] text-rose-ink">Fresh this week</p><h2 className="display-font mt-2 text-3xl font-bold tracking-[-0.04em] text-ink sm:text-4xl">The seasonal edit</h2></div><Link href="/shop" className="hidden text-xs font-bold uppercase tracking-widest text-rose-ink sm:block">Shop all →</Link></div>      <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">{products.slice(0, 4).map((product) => <ProductCard key={product.id} product={product} onAdd={addToCart} onSave={saveProduct} saved={savedIds.includes(product.id)} />)}</div></div></section>
     </main>
   </div>;
 }
