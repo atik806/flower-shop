@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { categories } from "@/lib/data";
 import ThemeToggle from "@/components/theme-toggle";
 
 function Icon({ children }: { children: React.ReactNode }) {
@@ -76,6 +77,10 @@ export default function Storefront() {
           <div className="flex items-center gap-3 py-3 sm:px-6 sm:py-0"><span className="text-2xl text-rose-ink">♡</span><div><p className="text-xs font-bold text-ink">Made with intention</p><p className="mt-1 text-[11px] text-subtle">Hand-tied by local florists.</p></div></div>
           <div className="flex items-center gap-3 py-3 sm:px-6 sm:py-0 sm:last:pr-0"><span className="text-2xl text-rose-ink">⌁</span><div><p className="text-xs font-bold text-ink">Delivered with care</p><p className="mt-1 text-[11px] text-subtle">A beautiful arrival, guaranteed.</p></div></div>
         </div>
+      </section>
+      <section className="mx-auto max-w-[1240px] px-5 py-16 sm:py-20 lg:px-8">
+        <div className="flex items-end justify-between"><div><p className="text-[10px] font-bold uppercase tracking-[0.2em] text-rose-ink">Find your feeling</p><h2 className="display-font mt-2 text-3xl font-bold tracking-[-0.04em] text-ink sm:text-4xl">Shop by occasion</h2></div><Link href="/shop" className="hidden text-xs font-bold uppercase tracking-widest text-rose-ink sm:block">View all flowers →</Link></div>
+        <div className="hide-scrollbar mt-9 grid grid-cols-2 gap-3 overflow-x-auto sm:grid-cols-4 sm:gap-5">{categories.map((category) => <Link href={`/shop?category=${category.name}`} key={category.name} className="group relative aspect-[0.92] overflow-hidden rounded-[3px]"><img src={category.image} alt={category.name} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" /><div className="image-overlay absolute inset-0" /><span className="absolute bottom-5 left-5 display-font text-2xl font-bold text-white">{category.name}</span></Link>)}</div>
       </section>
     </main>
   </div>;
