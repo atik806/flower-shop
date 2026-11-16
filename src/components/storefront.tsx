@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import ThemeToggle from "@/components/theme-toggle";
 
 function Icon({ children }: { children: React.ReactNode }) {
@@ -46,8 +48,11 @@ function Header({ cartCount, onCart, onSearch }: { cartCount: number; onCart: ()
 }
 
 export default function Storefront() {
+  const router = useRouter();
+  const [searchOpen, setSearchOpen] = useState(false);
   return <div className="min-h-screen bg-paper">
-    <Header cartCount={0} onCart={() => {}} onSearch={() => {}} />
+    <Header cartCount={0} onCart={() => {}} onSearch={() => setSearchOpen(true)} />
+    {searchOpen && <div className="fixed inset-0 z-40 bg-[#342521]/35 px-5 pt-24" onClick={() => setSearchOpen(false)}><div onClick={(event) => event.stopPropagation()} className="mx-auto max-w-[650px] bg-paper p-6 shadow-2xl"><div className="flex items-center gap-4 border-b border-line-strong pb-3"><span className="text-xl text-rose-ink">⌕</span><input autoFocus placeholder="Search bouquets, gifts, roses..." className="w-full bg-transparent text-lg outline-none" onKeyDown={(event) => { if (event.key === "Enter") router.push(`/shop?search=${encodeURIComponent(event.currentTarget.value)}`); }} /><button onClick={() => setSearchOpen(false)} aria-label="Close search" className="text-xl text-muted">×</button></div><p className="mt-4 text-xs text-subtle">Try “roses”, “birthday”, or “gift set”, then press Enter.</p></div></div>}
     <main>
       <section className="hero-glow relative overflow-hidden">
         <div className="mx-auto grid max-w-[1240px] items-center gap-12 px-5 pb-16 pt-10 sm:pt-20 lg:grid-cols-[0.9fr_1.1fr] lg:px-8 lg:pb-24 lg:pt-24">
